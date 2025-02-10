@@ -13,6 +13,13 @@ function checkCollision(rect1, rect2) {
     );
 }
 
+function loadTexture(imagePath) {
+    let image = r.LoadImage(imagePath); // Load image into RAM
+    let texture = r.LoadTextureFromImage(image); // Convert to GPU texture
+    r.UnloadImage(image); // Free image from RAM, only texture remains
+    return texture; // Return GPU texture
+}
+
 // -- Classes -- \\ (Because i cant do separate Files)
 // -- Player -- \\
 class Player {
@@ -33,7 +40,8 @@ class Player {
     }
 
     draw() {
-        r.DrawRectangle(this.x, this.y, this.width, this.height, r.BLUE);
+        // r.DrawRectangle(this.x, this.y, this.width, this.height, r.BLUE);
+        r.DrawTexture(texture[1], this.x, this.y, r.WHITE);
     }
 }
 
@@ -63,6 +71,11 @@ class Entity {
 
 // -- Variables -- \\
 const player = new Player(400, 300, 5);
+
+const texture = [
+    loadTexture("./resources/bild.png"),
+    loadTexture("./resources/dino.png")
+]
 
 // -- Game Loop -- \\
 while (!r.WindowShouldClose()) {
