@@ -1,7 +1,8 @@
 const r = require('raylib');
 const { join } = require('path')
+const { Player } = require('./player')
 
-r.InitWindow(800, 600, "3D Player Model - Ground & Collision");
+r.InitWindow(800, 600, "Novatek - Test 1");
 r.SetTargetFPS(60);
 r.DisableCursor(); // Hide cursor for FPS movement
 
@@ -9,11 +10,13 @@ const image = r.LoadImage(join(__dirname, 'resources', 'bild.png')) // Loaded in
 const texture = r.LoadTextureFromImage(image) // Image converted to texture, GPU memory (VRAM)
 r.UnloadImage(image)
 
-const player = {
-    position: { x: 0, y: 1, z: 0 },
-    size: { width: 0.5, height: 2, depth: 0.5 },
-    speed: 0.1
-};
+// const player = {
+//     position: { x: 0, y: 1, z: 0 },
+//     size: { width: 0.5, height: 2, depth: 0.5 },
+//     speed: 0.1
+// };
+
+const player = new Player({ x: 0, y: 1, z: 0 }, { width: 0.5, height: 2, depth: 0.5 }, 0.1);
 
 const camera = {
     position: { x: player.position.x, y: player.position.y + 1.5, z: player.position.z },
@@ -23,13 +26,20 @@ const camera = {
     projection: r.CAMERA_PERSPECTIVE
 };
 
+// Generate a cube mesh and convert it to a model
+const mesh = r.GenMeshCube(2, 2, 2);
+const model = r.LoadModelFromMesh(mesh);
+
+// Assign texture to the model
+model.materials[0].maps[r.MATERIAL_MAP_ALBEDO].texture = texture;
+
 // Obstacles (Cubes)
 const obstacles = [
     { position: { x: 3, y: 1, z: 3 }, size: { width: 2, height: 2, depth: 2 } },
     { position: { x: -3, y: 1, z: -3 }, size: { width: 2, height: 2, depth: 2 } },
 ];
 
-let yaw = 0, pitch = 0;
+let yaw = 0, pitch = 0+360;
 
 function checkCollision(newPos) {
     // Check ground collision (stay above y = 1)
@@ -90,7 +100,6 @@ while (!r.WindowShouldClose()) {
     }
     if(r.IsKeyDown(r.KEY_SPACE)) {
         newPos.y += player.speed * 5;
-        newPos.y -= player.speed * 5;
     }
     if(r.IsKeyDown(r.KEY_LEFT_SHIFT)) {
         newPos.y -= player.speed;
@@ -117,6 +126,7 @@ while (!r.WindowShouldClose()) {
     
     // Draw Ground (Flat rectangle)
     r.DrawCube({ x: 0, y: -0.01, z: 0 }, 20, 0.1, 20, r.DARKGREEN);  // Very thin cube as ground
+    r.DrawModel(model, { x: 0, y: 0, z: 0 }, 1, r.WHITE);
 
     // Draw Player (as a Rectangle)
     r.DrawCube(player.position, player.size.width, player.size.height, player.size.depth, r.BLUE);
