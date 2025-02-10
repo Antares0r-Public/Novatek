@@ -1,6 +1,6 @@
 const r = require('raylib');
 
-r.InitWindow(800, 600, "Novatek - Test 2");
+r.InitWindow(1980, 1080, "Novatek - Test 2");
 r.SetTargetFPS(60);
 
 // -- Functions -- \\
@@ -41,7 +41,7 @@ class Player {
 
     draw() {
         // r.DrawRectangle(this.x, this.y, this.width, this.height, r.BLUE);
-        r.DrawTexture(texture[1], this.x, this.y, r.WHITE);
+        r.DrawTexture(texture[5], this.x, this.y, r.WHITE);
     }
 }
 
@@ -74,7 +74,11 @@ const player = new Player(400, 300, 5);
 
 const texture = [
     loadTexture("./resources/bild.png"),
-    loadTexture("./resources/dino.png")
+    loadTexture("./resources/dino.png"),
+    loadTexture("./resources/bauby.png"),
+    loadTexture("./resources/creamer.png"),
+    loadTexture("./resources/froshy.png"),
+    loadTexture("./resources/toster.png"),
 ]
 
 // -- Game Loop -- \\
@@ -87,6 +91,14 @@ while (!r.WindowShouldClose()) {
     r.ClearBackground(r.SKYBLUE);
 
     player.draw();
+
+    // r.DrawTexture(texture[0], 0, 0, r.WHITE);
+    r.DrawTexture(texture[1], 800, 0, r.WHITE);
+    r.DrawTexture(texture[2], 0, 600, r.WHITE);
+    r.DrawTexture(texture[3], 800, 600, r.WHITE);
+    r.DrawTexture(texture[4], 400, 500, r.WHITE);
+    r.DrawTexture(texture[5], 400, 300, r.WHITE);
+    // r.DrawTexture(texture[6], 400, 800, r.WHITE);
 
     r.EndDrawing();
 }
