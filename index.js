@@ -79,6 +79,7 @@ const texture = [
     loadTexture("./resources/creamer.png"),
     loadTexture("./resources/froshy.png"),
     loadTexture("./resources/toster.png"),
+    loadTexture("./resources/schote.png")
 ]
 
 // -- Game Loop -- \\
@@ -98,9 +99,12 @@ while (!r.WindowShouldClose()) {
     r.DrawTexture(texture[3], 800, 600, r.WHITE);
     r.DrawTexture(texture[4], 400, 500, r.WHITE);
     r.DrawTexture(texture[5], 400, 300, r.WHITE);
-    // r.DrawTexture(texture[6], 400, 800, r.WHITE);
+    r.DrawTexture(texture[6], 400, 500, r.WHITE);
 
     r.EndDrawing();
 }
 
+texture.forEach(element => {
+    r.UnloadTexture(element);
+});
 r.CloseWindow();
