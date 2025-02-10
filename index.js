@@ -17,7 +17,24 @@ r.DisableCursor(); // Hide cursor for FPS movement
 //     speed: 0.1
 // };
 
-const player = new Player({ x: 0, y: 1, z: 0 }, { width: 0.5, height: 2, depth: 0.5 }, 0.1);
+let radYaw;
+let obstacles = [
+    { position: { x: 3, y: 1, z: 3 }, size: { width: 2, height: 2, depth: 2 } },
+    { position: { x: -3, y: 1, z: -3 }, size: { width: 2, height: 2, depth: 2 } },
+];
+
+// this.position = position;
+// this.size = size;
+// this.speed = speed;
+// this.r = r;
+// this.radYaw = radYaw;
+// this.obstacles = obstacles;
+// this.right = {
+//     x: -Math.cos(this.radYaw),
+//     z: Math.sin(this.radYaw),
+// };
+
+const player = new Player({ x: 0, y: 1, z: 0 }, { width: 0.5, height: 2, depth: 0.5 }, 0.1, r, radYaw, obstacles);
 
 const camera = {
     position: { x: player.position.x, y: player.position.y + 1.5, z: player.position.z },
@@ -35,29 +52,9 @@ const camera = {
 // model.materials[0].maps[r.MATERIAL_MAP_ALBEDO].texture = texture;
 
 // Obstacles (Cubes)
-const obstacles = [
-    { position: { x: 3, y: 1, z: 3 }, size: { width: 2, height: 2, depth: 2 } },
-    { position: { x: -3, y: 1, z: -3 }, size: { width: 2, height: 2, depth: 2 } },
-];
 
 let yaw = 0, pitch = 0+360;
 
-function checkCollision(newPos) {
-    // Check ground collision (stay above y = 1)
-    if (newPos.y < 1) return false;
-
-    // Check obstacle collision
-    for (const obj of obstacles) {
-        if (
-            Math.abs(newPos.x - obj.position.x) < (player.size.width + obj.size.width) / 2 &&
-            Math.abs(newPos.y - obj.position.y) < (player.size.height + obj.size.height) / 2 &&
-            Math.abs(newPos.z - obj.position.z) < (player.size.depth + obj.size.depth) / 2
-        ) {
-            return false;
-        }
-    }
-    return true;
-}
 
 while (!r.WindowShouldClose()) {
     // --- MOUSE LOOK ---
@@ -66,8 +63,8 @@ while (!r.WindowShouldClose()) {
     pitch -= mouseDelta.y * 0.1;
     pitch = Math.max(-89, Math.min(89, pitch));
 
-    const radYaw = yaw * (Math.PI / 180);
-    const radPitch = pitch * (Math.PI / 180);
+    radYaw = yaw * (Math.PI / 180);
+    radPitch = pitch * (Math.PI / 180);
 
     const forward = {
         x: Math.cos(radPitch) * Math.sin(radYaw),
@@ -75,41 +72,11 @@ while (!r.WindowShouldClose()) {
         z: Math.cos(radPitch) * Math.cos(radYaw),
     };
 
-    const right = {
-        x: -Math.cos(radYaw),
-        z: Math.sin(radYaw),
-    };
 
-    // --- MOVEMENT WITH COLLISION ---
-    let newPos = { ...player.position };
+    // --- INPUT ---
+    player.checkForInput();
 
-    if (r.IsKeyDown(r.KEY_W)) {
-        newPos.x += Math.sin(radYaw) * player.speed;
-        newPos.z += Math.cos(radYaw) * player.speed;
-    }
-    if (r.IsKeyDown(r.KEY_S)) {
-        newPos.x -= Math.sin(radYaw) * player.speed;
-        newPos.z -= Math.cos(radYaw) * player.speed;
-    }
-    if (r.IsKeyDown(r.KEY_D)) {
-        newPos.x += right.x * player.speed;
-        newPos.z += right.z * player.speed;
-    }
-    if (r.IsKeyDown(r.KEY_A)) {
-        newPos.x -= right.x * player.speed;
-        newPos.z -= right.z * player.speed;
-    }
-    if(r.IsKeyDown(r.KEY_SPACE)) {
-        newPos.y += player.speed;
-    }
-    if(r.IsKeyDown(r.KEY_LEFT_SHIFT)) {
-        newPos.y -= player.speed;
-    }
 
-    // Apply movement only if no collision
-    if (checkCollision(newPos)) {
-        player.position = newPos;
-    }
 
     // --- UPDATE CAMERA ---
     camera.position = { x: player.position.x, y: player.position.y + 1.5, z: player.position.z };
